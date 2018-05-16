@@ -1,0 +1,54 @@
+# 0 - последовательное умножение матрицы
+# 1 - обычное умножение матрицы openmp
+# 2 - необычное умножение матрицы openmp
+TYPE_MUL = -DMATRTIX_MUL=2
+
+
+COMPILER = g++
+FLAGS = -std=c++0x -O2 -Wall -Wextra -Wpedantic -fopenmp
+
+OS := $(shell uname)
+ifeq ($(OS),Darwin)
+	COMPILER = g++-7
+endif
+
+ifdef SYSTEMROOT
+    RM = del /Q
+else
+    RM = rm -f
+endif
+
+
+default: main_1 main_2
+
+all: main_0 main_1 main_2
+
+main_0: main.o Matrix_0.o functions.o
+	$(COMPILER) $(FLAGS) main.o Matrix_0.o functions.o -o $@
+
+main_1: main.o Matrix_1.o functions.o
+	$(COMPILER) $(FLAGS) main.o Matrix_1.o functions.o -o $@
+
+main_2: main.o Matrix_2.o functions.o
+	$(COMPILER) $(FLAGS) main.o Matrix_2.o functions.o -o $@
+
+main.o: main.cpp
+	$(COMPILER) -c $(FLAGS) main.cpp
+
+functions.o: functions.cpp
+	$(COMPILER) -c $(FLAGS) functions.cpp
+
+Matrix_0.o: Matrix.cpp
+	$(COMPILER) -c $(FLAGS) -DMATRTIX_MUL=0 Matrix.cpp -o $@
+
+Matrix_1.o: Matrix.cpp
+	$(COMPILER) -c $(FLAGS) -DMATRTIX_MUL=1 Matrix.cpp -o $@
+
+Matrix_2.o: Matrix.cpp
+	$(COMPILER) -c $(FLAGS) -DMATRTIX_MUL=2 Matrix.cpp -o $@
+
+clean:
+	$(RM) *.o
+
+clean_all:
+	$(RM) *.o main_?
