@@ -92,7 +92,7 @@ DirichletResult solveDirichletParallel(size_t N,  double eps) {
 	do {
 		iterations++;
 		max = 0;
-		#pragma omp parallel for private(j) reduction (std::max:delta)
+		#pragma omp parallel for private(j) reduction (max:delta)
 		for (size_t i = 1; i < N + 1; ++i)
 			for (j = 1; j < N + 1; ++j) {
 				double u0 = u_mat(i, j);
